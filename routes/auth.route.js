@@ -1,9 +1,9 @@
-import express from 'express';
+import { Router } from 'express';
 import { login, register } from '../controllers/auth.controller.js';
 import { body, } from 'express-validator'
 import { validationResultEx } from '../middlewares/validationResultEx.js';
 
-const router = express.Router();
+const router = Router();
 
 router.post('/register', [
     body('email', "Formato de email incorrecto").trim().isEmail().normalizeEmail(),
@@ -14,7 +14,7 @@ router.post('/register', [
         }
         return value;
     })
-], 
+],
 validationResultEx,
 register);
 router.post('/login', [
