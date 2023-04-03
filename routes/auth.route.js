@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { login, register } from '../controllers/auth.controller.js';
+import { infoUser, login, register, refreshToken, logout } from '../controllers/auth.controller.js';
 import { body, } from 'express-validator'
 import { validationResultEx } from '../middlewares/validationResultEx.js';
+import { requireToken } from '../middlewares/requireAuth.js';
 
 const router = Router();
 
@@ -15,14 +16,16 @@ router.post('/register', [
         return value;
     })
 ],
-validationResultEx,
-register);
+    validationResultEx,
+    register);
 router.post('/login', [
     body('email', "Formato de email incorrecto").trim().isEmail().normalizeEmail(),
     body('password', "Maximo de 6 carácteres").trim().isLength({ min: 6 })
-], 
-validationResultEx,
-login);
+],
+    validationResultEx,
+    login);
 
-
+router.get('/protected', requireToken, infoUser)
+router.get('/refresh', refreshToken)
+router.get('/logout', logout)
 export default router; 
