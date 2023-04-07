@@ -1,5 +1,6 @@
 
 import jwt from 'jsonwebtoken'
+import { tokenVerificationErrors } from '../utils/tokenManager.js';
 
 export const requireToken = (req, res, next) => {
     try {
@@ -17,15 +18,6 @@ export const requireToken = (req, res, next) => {
         next()
     } catch (error) {
         console.log(error)
-
-        const tokenVerificationErrors = {
-            "invalid signature": "La firma del JWT no es valida ✒️❌",
-            "jwt expired": "JWT expiro 😱",
-            "invalid token": "Token no valido 😡",
-            "jwt malformed": "Token no valido 😡",
-            "No Bearer": "Utiliza formato Bearer 😒"
-        };
-
         return res
             .status(401)
             .send({ error: tokenVerificationErrors[error.message] })
