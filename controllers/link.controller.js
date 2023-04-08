@@ -14,14 +14,12 @@ export const getLinks = async (req, res) => {
 
 export const getLink = async (req, res) => {
     try {
-        const { id } = req.params;
-        const link = await Link.findById(id);
+        const { nanoLink } = req.params;
+        const link = await Link.findOne({ nanoLink });
 
         if (!link) return res.status(404).json({ error: 'No existe este link 🥲' })
 
-        if(link.uid.equals(req.uid))  return res.status(401).json({ error: 'Este link no te pertenece 😠' })
-
-        return res.json({ link })
+        return res.json({ longLink: link.longLink   })
     } catch (error) {
         console.log(error)
         if (error.kind === "ObjectId") {
@@ -30,6 +28,27 @@ export const getLink = async (req, res) => {
         return res.status(500).json({ error: 'Error de servidor 😱🔥' })
     }
 };
+
+
+// Para un CRUD tradicional
+// export const getLinkV1 = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const link = await Link.findById(id);
+
+//         if (!link) return res.status(404).json({ error: 'No existe este link 🥲' })
+
+//         if (!link.uid.equals(req.uid)) return res.status(401).json({ error: 'Este link no te pertenece 😠' })
+
+//         return res.json({ link })
+//     } catch (error) {
+//         console.log(error)
+//         if (error.kind === "ObjectId") {
+//             return res.status(403).json({ error: 'Formato de Id Incorrecto ✒️ ❌' })
+//         }
+//         return res.status(500).json({ error: 'Error de servidor 😱🔥' })
+//     }
+// };
 
 export const createLink = async (req, res) => {
     try {
@@ -59,7 +78,7 @@ export const removeLink = async (req, res) => {
 
         if (!link) return res.status(404).json({ error: 'No existe este link 🥲' })
 
-        if(link.uid.equals(req.uid)) 
+        if (!link.uid.equals(req.uid))
             return res.status(401).json({ error: 'Este link no te pertenece 😠' })
 
         await link.deleteOne();
@@ -73,4 +92,36 @@ export const removeLink = async (req, res) => {
         return res.status(500).json({ error: 'Error de servidor 😱🔥' })
     }
 };
-    
+
+export const updateLink = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { longLink } = req.body;
+
+        console.log(longLink)
+
+        if (!longLink.startsWith("https://")) {
+            longLink = "https://" + longLink
+        }
+
+        const link = await Link.findById(id);
+
+        if (!link) return res.status(404).json({ error: 'No existe este link 🥲' })
+
+        if (!link.uid.equals(req.uid))
+            return res.status(401).json({ error: 'Este link no te pertenece 😠' })
+
+        //Actualizar
+        link.longLink = longLink;
+        await link.save()
+        // await link.updateOne();
+
+        return res.json({ link })
+    } catch (error) {
+        console.log(error)
+        if (error.kind === "ObjectId") {
+            return res.status(403).json({ error: 'Formato de Id Incorrecto ✒️ ❌' })
+        }
+        return res.status(500).json({ error: 'Error de servidor 😱🔥' })
+    }
+};

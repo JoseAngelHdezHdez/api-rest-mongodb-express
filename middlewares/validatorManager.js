@@ -29,7 +29,7 @@ export const bodyLinkValidator = [
 
                 return value
             } catch (error) {
-                // console.log(error)
+                console.log(error)
                 throw new Error("Not found longLink 404")
             }
         }),

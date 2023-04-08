@@ -1,14 +1,35 @@
 import 'dotenv/config';
 import './database/connectDB.js'
 import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors'
+
+//Importacion de las rutas de cadua una de las  rutas
 import authRouter from './routes/auth.route.js';
 import linkRouter from './routes/link.route.js'
-import cookieParser from 'cookie-parser';
+import redirectRouter from './routes/redirect.route.js'
 
 const app = express();
 
+const whiteList = [process.env.ORIGIN1];
+
+app.use(cors({
+    origin: function(origin, callback){
+         if (whiteList.includes(origin)) {
+            return callback(null, origin);
+         }
+
+         return callback(
+            `Error de CORS origin ${origin} no esta autorizado!!! ❌😡` 
+        );
+    }
+}))
+
 app.use(express.json());
 app.use(cookieParser());
+//Ejemplo back redirect (opcional)
+app.use('/', redirectRouter)
+//Lo que se estar ocupando 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/links', linkRouter);
 
