@@ -11,7 +11,7 @@ import redirectRouter from './routes/redirect.route.js'
 
 const app = express();
 
-const whiteList = [process.env.ORIGIN1];
+const whiteList = [process.env.ORIGIN1, process.env.ORIGIN2];
 
 app.use(cors({
     origin: function(origin, callback){
