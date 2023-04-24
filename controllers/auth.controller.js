@@ -1,6 +1,6 @@
 // import { User } from '../models/User.js';
 import { generateRefreshToken, generaterToken } from '../utils/tokenManager.js';
-import { User } from '../models/User.js'
+import { User } from '../../express-mongodb/models/User.js'
 
 export const register = async (req, res) => {
     const { email, password } = req.body
